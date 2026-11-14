@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BABANG HAFEEZ AI VIDEO</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#101010;color:white;
+ font-family:Arial,sans-serif;padding:20px;
+}
+header{text-align:center;padding:20px 5px}
+.logo{font-size:38px}
+h1{color:#e6ad38;font-size:23px}
+.sub{color:#aaa;font-size:12px}
+.card{
+ background:#1d1d1d;border:1px solid #39312a;
+ border-radius:15px;padding:18px;margin-bottom:17px;
+}
+h3{color:#e6ad38;margin-top:0}
+label{display:block;margin:13px 0 7px;font-size:14px}
+textarea,select,input{
+ width:100%;padding:13px;border-radius:9px;
+ border:1px solid #555;background:#292929;
+ color:white;font-size:15px;
+}
+textarea{height:110px;resize:vertical}
+button{
+ width:100%;padding:15px;border:0;border-radius:10px;
+ background:#d99c28;color:#17120a;
+ font-weight:bold;font-size:16px;margin-top:12px;
+}
+button:disabled{opacity:.5}
+.upload{
+ border:2px dashed #777;border-radius:10px;
+ padding:22px;text-align:center;color:#bbb;
+}
+#preview{width:100%;margin-top:12px;border-radius:10px;display:none}
+footer{text-align:center;color:#888;font-size:12px;padding:15px}
+#status{color:#f0bd54;font-size:14px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🎬</div>
+<h1>BABANG HAFEEZ AI VIDEO</h1>
+<div class="sub">AI VIDEO GENERATOR • SEEDANCE 2.5</div>
+</header>
+
+<div class="card">
+<h3>🎥 Buat Video AI</h3>
+
+<label>Jenis pembuatan video</label>
+<select id="mode">
+<option value="text">Text to Video</option>
+<option value="image">Image to Video</option>
+</select>
+
+<label>Upload foto aktor</label>
+<div class="upload">
+<input type="file" id="photo" accept="image/*">
+<img id="preview">
+</div>
+
+<label>Prompt video</label>
+<textarea id="prompt" placeholder="Contoh: Babang Hafeez berjalan di bangunan kolonial tua, suasana malam berkabut, cinematic horror, realistic..."></textarea>
+
+<label>Rasio video</label>
+<select id="ratio">
+<option value="9:16">9:16 - Vertikal</option>
+<option value="16:9">16:9 - Landscape</option>
+</select>
+
+<label>Durasi video</label>
+<select id="duration">
+<option value="5">5 detik</option>
+<option value="10">10 detik</option>
+<option value="15">15 detik</option>
+</select>
+
+<button id="generate">GENERATE VIDEO 🚀</button>
+<p id="status">Siap membuat video. Koneksi mesin AI akan diaktifkan melalui server.</p>
+</div>
+
+<div class="card">
+<h3>📽️ Hasil Video</h3>
+<div id="result">Belum ada video yang dibuat.</div>
+</div>
+
+<footer>
+BABANG HAFEEZ CHANNEL<br>
+AI VIDEO GENERATOR
+</footer>
+
+<script>
+const photo=document.getElementById('photo');
+const preview=document.getElementById('preview');
+const mode=document.getElementById('mode');
+const status=document.getElementById('status');
+
+photo.addEventListener('change',()=>{
+ const file=photo.files[0];
+ if(!file)return;
+ preview.src=URL.createObjectURL(file);
+ preview.style.display='block';
+});
+
+mode.addEventListener('change',()=>{
+ photo.disabled=mode.value==='text';
+});
+
+document.getElementById('generate').addEventListener('click',async()=>{
+ const prompt=document.getElementById('prompt').value.trim();
+ if(!prompt){
+  status.textContent='Masukkan prompt video terlebih dahulu.';
+  return;
+ }
+ if(mode.value==='image'&&!photo.files.length){
+  status.textContent='Silakan upload foto aktor terlebih dahulu.';
+  return;
+ }
+
+ const button=document.getElementById('generate');
+ button.disabled=true;
+ status.textContent='Memeriksa koneksi server AI...';
+
+ try{
+  const form=new FormData();
+  form.append('prompt',prompt);
+  form.append('mode',mode.value);
+  form.append('ratio',document.getElementById('ratio').value);
+  form.append('duration',document.getElementById('duration').value);
+  if(photo.files.length)form.append('image',photo.files[0]);
+
+  const response=await fetch('/api/generate',{
+   method:'POST',body:form
+  });
+  if(!response.ok)throw new Error('Server belum tersedia atau terjadi kesalahan.');
+  const data=await response.json();
+  status.textContent='Permintaan berhasil dikirim.';
+
+  if(data.video_url){
+   document.getElementById('result').innerHTML='';
+   const video=document.createElement('video');
+   video.src=data.video_url;
+   video.controls=true;
+   video.style.width='100%';
+   document.getElementById('result').appendChild(video);
+  }else{
+   status.textContent='Permintaan diterima. Menunggu hasil video.';
+  }
+ }catch(error){
+  status.textContent='Tampilan aplikasi sudah siap. Mesin Seedance belum tersambung. Kita perlu menyelesaikan server backend terlebih dahulu.';
+ }
+ button.disabled=false;
+});
+</script>
+</body>
+  </html>
+  
