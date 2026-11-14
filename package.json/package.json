@@ -1,0 +1,14 @@
+
+{
+  "name": "babang-hafeez-ai-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Video Generator BABANG HAFEEZ CHANNEL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
